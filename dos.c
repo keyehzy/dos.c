@@ -206,7 +206,7 @@ int main(int argc, char **argv) {
 
   while (1) {
     int option_index = 0;
-    int c = getopt_long(argc, argv, "s:n:h", long_options, &option_index);
+    int c = getopt_long(argc, argv, "s:p:n:h", long_options, &option_index);
 
     if (c == -1) break;
 
