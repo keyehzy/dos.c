@@ -24,6 +24,15 @@ typedef struct {
 #define STR(s, l)     (str) { s, l }
 #define STRPAIR(h, t) (strpair) { h, t }
 
+#define BUFFER_SIZE 256
+
+static char* str_to_cstr(str s, char buffer[BUFFER_SIZE]) {
+  if (s.len >= BUFFER_SIZE) return NULL;
+  memcpy(buffer, s.data, s.len);
+  buffer[s.len] = '\0';
+  return buffer;
+}
+
 typedef struct {
   double *data;
   ptrdiff_t len;
@@ -35,10 +44,8 @@ static str readcontent(str path) {
   int fsize = 0;
   FILE *fp;
 
-  static char buf[256];
-  if (path.len >= 256) return (str) {0};
-  memcpy(buf, path.data, path.len);
-  buf[path.len] = '\0';
+  static char buf[BUFFER_SIZE];
+  if (!str_to_cstr(path, buf)) return (str) {0};
 
   fp = fopen(buf, "r");
   if(fp) {
@@ -73,11 +80,9 @@ static strpair chop(str s, char delim) {
 }
 
 static double to_double(str s) {
-    static char buf[256];
-    if (s.len >= 256) return 0.0/0.0;
-    memcpy(buf, s.data, s.len);
-    buf[s.len] = '\0';
-    return strtod(buf, NULL);
+  static char buf[BUFFER_SIZE];
+  if (!str_to_cstr(s, buf)) return 0.0/0.0;
+  return strtod(buf, NULL);
 }
 
 static ptrdiff_t count_lines(str content) {
